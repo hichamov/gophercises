@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/hichamov/gophercises/02-url-shoertener/shortener"
+
+	myrandompackage "github.com/hichamov/gophercises/02-url-shoertener"
 )
 
 func main()  {
 
-	fmt.Println(Generate_Random_Int())
+	fmt.Println(myrandompackage.Generate_Random_Int())
 }
