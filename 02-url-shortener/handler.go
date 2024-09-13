@@ -1,9 +1,14 @@
 package shortener
 
 import (
-	"math/rand/v2"
+	"net/http"
 )
 
-func Generate_Random_Int() (generated int){
-	return rand.IntN(100)
+func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
+
+	Handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("farhi"))
+	})
+
+	return Handler
 }
