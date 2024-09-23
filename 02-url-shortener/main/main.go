@@ -1,67 +1,38 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-
-	myrandompackage "github.com/hichamov/gophercises/02-url-shortener"
+	// myrandompackage "github.com/hichamov/gophercises/02-url-shortener"
 )
-
-type Scope struct {
-	Project string
-	Area    string
-}
-
-type Note struct {
-	Title string
-	Tags  []string
-	Text  string
-	Scope Scope
-}
 
 func main() {
 
-	// Define a map of path and target URLs to be used
-
-	routesmap := map[string]string{
+	// This map will be used to create a handler
+	urlmap := map[string]string{
 		"/godoc": "https://go.dev/doc/",
-		"/pythondoc": "https://docs.python.org/3/",
+		"/pydoc": "https://docs.python.org/3/",
 	}
 
-	// The default route handler
-	defaultHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
+	// // This is the fallback handler
+	fallbackHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Home Page!"))
 	})
 
-	// // notes endpoint handler
-	// http.HandleFunc("POST /notes", createNote)
-
-	// // Test routing handler
-	// http.HandleFunc("GET /routing", routeRequest)
-
-	// Use the new handler
-	finalHandler := http.HandleFunc("/hicham", myrandompackage.MapHandler(routesmap, defaultHandler))
-
-	http.HandleFunc("/", finalHandler)
-	// Ster server
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mainHandler := MapHandler(urlmap, fallbackHandler)
+	
+	log.Fatal(http.ListenAndServe(":8080", mainHandler))
 }
 
-// func routeRequest(w http.ResponseWriter, r *http.Request) {
-// 	http.Redirect(w, r, "https://pkg.go.dev/", http.StatusSeeOther)
-// }
+func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
+	
+	return func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
 
-// func createNote(w http.ResponseWriter, r *http.Request) {
-// 	var note Note
-// 	decoder := json.NewDecoder(r.Body)
+		if dest, ok := pathsToUrls[path]; ok {
+			http.Redirect(w, r, dest, http.StatusSeeOther)
+		}
 
-// 	if err := decoder.Decode(&note); err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	fmt.Fprintf(w, "Note: %+v\n", note)
-
-// }
+		fallback.ServeHTTP(w, r)
+	}
+}
