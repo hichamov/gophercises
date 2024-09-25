@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "fmt"
 	"log"
 	"net/http"
 	"os"
@@ -16,13 +15,7 @@ type Route struct {
 
 func main() {
 
-	// This map will be used to create a handler
-	// urlmap := map[string]string{
-	// 	"/godoc": "https://go.dev/doc/",
-	// 	"/pydoc": "https://docs.python.org/3/",
-	// }
-
-	// // This is the fallback handler
+	// This is the fallback handler
 	fallbackHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Home Page!"))
 	})
@@ -31,15 +24,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-
-	r := parseYaml(yamlfile)
-	finalmap := buildMap(r)
 	
-	// YAMLHandler(yamlfile, fallbackHandler)
-
-	// mainHandler := MapHandler(urlmap, fallbackHandler)
-	mainHandler := MapHandler(finalmap, fallbackHandler)
-
+	mainHandler, _ := YAMLHandler(yamlfile, fallbackHandler)
 	
 	log.Fatal(http.ListenAndServe(":8080", mainHandler))
 }
@@ -57,11 +43,13 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 	}
 }
 
-// func YAMLHandler(yaml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-// 	parsedyaml := parseYaml(yaml)
+func YAMLHandler(yamlcontent []byte, fallback http.Handler) (http.HandlerFunc, error) {
 
-// 	return nil, nil
-// }
+	parsedyaml := parseYaml(yamlcontent)
+	finalmap := buildMap(parsedyaml)
+
+	return MapHandler(finalmap, fallback), nil
+}
 
 func parseYaml(yamlstring []byte) Route{
 	var parsedyaml Route
