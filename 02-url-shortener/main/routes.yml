@@ -1,0 +1,7 @@
+routes:
+  - name: "/godoc"
+    target: "https://pkg.go.dev"
+  - name: "/pydoc"
+    target: "https://docs.python.org"
+  - name: "/rustdoc"
+    target: "https://www.rust-lang.org/learn"
