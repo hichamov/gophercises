@@ -20,7 +20,7 @@ type Option struct {
 	Arc  string `json:"arc"` 
 }
 
-func Generate_jsondata() (*Listofstories){
+func Generate_jsondata() (Listofstories){
     
   filename := flag.String("filename", "jsondata/gopher.json","This Specifies the json filename")
   flag.Parse()
@@ -33,5 +33,5 @@ func Generate_jsondata() (*Listofstories){
 		log.Println(err)
 	}
   
-  return &stoireslist
+  return stoireslist
 }
